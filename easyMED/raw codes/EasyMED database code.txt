@@ -1,0 +1,163 @@
+create database easymed;
+
+create table address(
+	id int(8) primary key auto_increment,
+    suburb varchar(25) not null,
+    area varchar(25) not null,
+    city varchar(25) not null,
+    unique(suburb),
+    index(city, area),
+    created_at timestamp not null default current_timestamp(),
+    update_at timestamp not null default current_timestamp()
+);
+
+insert into address(id, suburb, area, city)
+values(1, "Bashundhora", "Baridhara", "Dhaka"),
+	  (2, "Noton Bazar", "Baridhara", "Dhaka"),
+      (5, "New Market", "Chawlkbazar", "Chittagong"),
+      (9, "Sunapur", "Maizdi", "Nowakhali");
+      
+create table users(
+	id int(11) primary key auto_increment,
+    fname varchar(20) default null,
+    lname varchar(20) not null,
+    phone char(11) not null,
+    email varchar(25) not null,
+    pass varchar(50) not null,
+    address_id int(8) default null,
+    unique(email),
+    constraint user_info unique(fname, lname, phone),
+	created_at timestamp not null default current_timestamp(),
+    update_at timestamp not null default current_timestamp(),
+    foreign key(address_id) 
+    references address(id)
+    on delete no action
+    on update cascade
+);
+
+insert into users(id, fname, lname, phone, email, pass, address_id)
+values(2, "Sakib", "Alamin", "01822268675", "sakib.alamin@gmail.com", "nstryjdcty", 5),
+	  (5, "Afrose", "maisha", "01759348370", "afrosemaisha@yahoo.com", "ofvibj34nv", 9);
+
+create table ambulance(
+	id mediumint primary key auto_increment,
+    driver_name varchar(45) not null,
+    phone char(11) not null,
+    address_id int(8) not null,
+    created_at timestamp not null default current_timestamp(),
+    update_at timestamp not null default current_timestamp(),
+    foreign key(address_id) 
+    references address(id)
+    on delete no action
+    on update cascade
+);
+
+create table blood_bank(
+	id int(11) primary key auto_increment,
+    blood_group varchar(12) not null,
+    user_id int(11) not null,
+    address_id int(8) not null,
+    created_at timestamp not null default current_timestamp(),
+    update_at timestamp not null default current_timestamp(),
+    foreign key(user_id) 
+    references users(id)
+    on delete cascade
+    on update cascade,
+    foreign key(address_id) 
+    references address(id)
+    on delete cascade
+    on update cascade
+);
+
+create table doctor(
+	id mediumint primary key auto_increment,
+    name varchar(45) not null,
+    degree varchar(100) not null,
+    speciality varchar(30) not null,
+    visitingFee decimal(8, 2) not null,
+    index(speciality),
+    created_at timestamp not null default current_timestamp(),
+    update_at timestamp not null default current_timestamp()
+);
+
+create table patient(
+	fname varchar(20),
+    lname varchar(20) not null,
+    age varchar(3) not null,
+    phone char(11) not null,
+    appointment_date varchar(15) not null,
+    user_id int(11) primary key,
+    doc_id mediumint not null,
+    created_at timestamp not null default current_timestamp(),
+    update_at timestamp not null default current_timestamp(),
+	foreign key(user_id) 
+    references users(id)
+    on delete cascade
+    on update cascade,
+    foreign key(doc_id) 
+    references doctor(id)
+    on delete cascade
+    on update cascade
+);
+
+create table appointment(
+	user_id int(11) primary key,
+    doctor_id mediumint not null,
+    created_at timestamp not null default current_timestamp(),
+    update_at timestamp not null default current_timestamp(),
+	foreign key(user_id) 
+    references users(id)
+    on delete cascade
+    on update cascade,
+    foreign key(doctor_id) 
+    references doctor(id)
+    on delete cascade
+    on update cascade
+);
+
+create table medicine(
+	id int(11) primary key auto_increment,
+    brand varchar(20) not null,
+    generic varchar(20) not null,
+    type varchar(20) not null,
+    strength varchar(15) not null,
+    company varchar(45) not null,
+    unit_available int(8) default null,
+    unit_price decimal(10, 2) not null,
+    created_at timestamp not null default current_timestamp(),
+    update_at timestamp not null default current_timestamp()
+);
+
+insert into medicine(id, brand, generic, type, strength, company, unit_available, unit_price)
+values(1, "Napa", "Paracitamol", "Tablet", "100mg", "Beximco", 345, 0.80),
+	  (2, "Brodil", "Salbutamol", "Tablet", "4mg", "ACI", 234, 0.46),
+      (5, "Flagyl", "Metronidazole", "Tablet", "200mg", "Sanofi", 123, 0.67),
+      (8, "Roceptin ", "Omeprazole", "Capsule", "20mg", "Desh", 652, 5.00),
+      (11, "Napa", "Paracitamol", "Tablet", "500mg+65mg", "Beximco", 324, 2.49);
+
+create table cart(
+	id mediumint primary key auto_increment,
+    user_id int(11) not null,
+    medicine_id int(11) not null,
+    created_at timestamp not null default current_timestamp(),
+    update_at timestamp not null default current_timestamp(),
+	foreign key(user_id) 
+    references users(id)
+    on delete cascade
+    on update cascade,
+    foreign key(medicine_id) 
+    references medicine(id)
+    on delete cascade
+    on update cascade
+);
+
+drop table address;
+drop table users;
+drop table ambulance;
+drop table blood_bank;
+drop table doctor;
+drop table appointment;
+drop table patient;
+drop table medicine;
+drop table cart;
+

@@ -133,12 +133,19 @@ values(1, "Napa", "Paracitamol", "Tablet", "100mg", "Beximco", 345, 0.80),
 	  (2, "Brodil", "Salbutamol", "Tablet", "4mg", "ACI", 234, 0.46),
       (5, "Flagyl", "Metronidazole", "Tablet", "200mg", "Sanofi", 123, 0.67),
       (8, "Roceptin ", "Omeprazole", "Capsule", "20mg", "Desh", 652, 5.00),
-      (11, "Napa", "Paracitamol", "Tablet", "500mg+65mg", "Beximco", 324, 2.49);
+      (11, "Napa Extra", "Paracitamol", "Tablet", "500mg+65mg", "Beximco", 324, 2.49);
+
+insert into medicine(id, brand, generic, type, strength, company, unit_available, unit_price)
+values(21, "A", "Paracitamol", "Tablet", "500mg+65mg", "Beximco", 324, 2.49);
+
+
+
 
 create table cart(
 	id mediumint primary key auto_increment,
     user_id int(11) not null,
     medicine_id int(11) not null,
+    unique(user_id, medicine_id),
     created_at timestamp not null default current_timestamp(),
     update_at timestamp not null default current_timestamp(),
 	foreign key(user_id) 
@@ -150,6 +157,13 @@ create table cart(
     on delete cascade
     on update cascade
 );
+
+insert into cart(id, user_id, medicine_id)
+values(1, 2, 2),
+	  (2, 2, 5),
+	  (3, 5, 2),
+      (4, 2, 11),
+      (5, 5, 8);
 
 drop table address;
 drop table users;
